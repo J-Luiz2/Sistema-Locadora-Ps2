@@ -28,7 +28,7 @@ class BaseEntity:
 class Obra(BaseEntity):
     def __init__(self, titulo, ano, categoria, quantidade = 1, *desenvolvedores) :
         self.titulo = titulo
-        desenvolvedor = str(desenvolvedores)
+        desenvolvedor = ", ".join(desenvolvedores)
         self.desenvolvedores = desenvolvedor
         self.ano = ano
         self.categoria = categoria
