@@ -192,7 +192,7 @@ class Acervo:
         Returns: Tabela"""
 
         table = self._relatorio_builder('Relatório Iventário')
-        for col in ('titulo', 'Autor', 'Ano', 'Categoria', 'Quantidade'):
+        for col in ('titulo', 'Desenvolvedores', 'Ano', 'Categoria', 'Quantidade'):
             table.add_header(col)
 
         for jogo in self.list_Obras:
@@ -207,7 +207,7 @@ class Acervo:
         Returns: Tabela"""
         table = self._relatorio_builder('Historico Débito')
 
-        for col in ('Usuario', 'Obra', 'Valor multa', 'Dias Atrasos'):
+        for col in ('Usuario', 'Jogo', 'Valor multa', 'Dias Atrasos'):
             table.add_header(col)
 
         data_ref = date.today() 
@@ -236,7 +236,7 @@ class Acervo:
 
         table = self._relatorio_builder(f'Historico Débito para Data: ({data_prev_text})')
 
-        for col in ('Usuario', 'Obra', 'Valor multa', 'Dias Atrasos'):
+        for col in ('Usuario', 'Jogo', 'Valor multa', 'Dias Atrasos'):
             table.add_header(col)
 
         for emp in self.emprestimos:
@@ -257,7 +257,7 @@ class Acervo:
         Returns:  Table: Objeto da tabela gerada. """
         tabela = self._relatorio_builder(f"Histórico de {Usuario}")
         
-        for col in ('Obra', 'Data Retirada', 'Data Prevista Devolução', 'Data Devolução'):
+        for col in ('Jogo', 'Data Retirada', 'Data Prevista Devolução', 'Data Devolução'):
             tabela.add_header(col)
 
         historico = [emp for emp in self.historico_emprestimos if emp.usuario == Usuario]
@@ -276,10 +276,10 @@ class Acervo:
 
         return tabela.table
 
-    def _valida_obra(self, obra):
+    def _valida_obra(self, jogo):
         """Valida Obra
         Args: Instância de Obra
         
         Returns: se a instância é de Obra ou não"""
-        if not isinstance(obra, Jogo):
+        if not isinstance(jogo, Jogo):
             raise TypeError(f'A instância informada não pertence à Classe Obra')
