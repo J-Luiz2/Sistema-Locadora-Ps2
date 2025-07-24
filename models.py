@@ -25,9 +25,10 @@ class BaseEntity:
         Returns: O uuid4 desta instância"""
         return uuid.uuid4()
     
-class Obra(BaseEntity):
+class Jogo(BaseEntity):
     def __init__(self, titulo, ano, categoria, quantidade = 1, *desenvolvedores) :
         self.titulo = titulo
+            
         desenvolvedor = ", ".join(desenvolvedores)
         self.desenvolvedores = desenvolvedor
         self.ano = ano
@@ -78,7 +79,7 @@ class Usuario(BaseEntity):
 
     
 class Emprestimo(BaseEntity):
-    def __init__(self, obra: Obra, usuario: Usuario, data_retirada=None, data_prev_devol=None):
+    def __init__(self, obra: Jogo, usuario: Usuario, data_retirada=None, data_prev_devol=None):
         super().__init__()
         if data_retirada is None:
             data_retirada = date.today()
