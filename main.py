@@ -1,4 +1,4 @@
-from models import Obra, Emprestimo, Usuario
+from models import Jogo, Emprestimo, Usuario
 from datetime import timedelta,date
 from rich.table import Table
 from rich.console import Console
@@ -44,7 +44,7 @@ class Acervo:
         self.emprestimos = []
         self.historico_emprestimos = []
 
-    def __iadd__(self, obra: Obra):
+    def __iadd__(self, obra : Jogo):
         '''Adiciona obra
         Args: 
             obra: pertence a class Obra
@@ -59,7 +59,7 @@ class Acervo:
         return self
 
 
-    def __isub__(self, Obra : Obra):
+    def __isub__(self, Obra : Jogo):
         '''Remove obra
         Args: 
             obra: pertence a class Obra
@@ -80,7 +80,7 @@ class Acervo:
         return self
     
 
-    def adicionar(self, Obra: Obra, x = 1):
+    def adicionar(self, Obra : Jogo, x = 1):
         '''Adiciona obra
         Args: 
             obra: pertence a class Obra
@@ -101,7 +101,7 @@ class Acervo:
         return self
     
 
-    def remover(self, Obra: Obra, x = 1):
+    def remover(self, Obra : Jogo, x = 1):
         '''Remove obra
         Args: 
             obra: pertence a class Obra
@@ -128,7 +128,7 @@ class Acervo:
     
     
     
-    def emprestar(self, Obra : Obra, Usuario : Usuario, dias =  7):
+    def emprestar(self, Obra : Jogo, Usuario : Usuario, dias =  7):
         """Emprestar
             Args: Obra, Usuario, dias que tem padrão 7
             
@@ -281,5 +281,5 @@ class Acervo:
         Args: Instância de Obra
         
         Returns: se a instância é de Obra ou não"""
-        if not isinstance(obra, Obra):
+        if not isinstance(obra, Jogo):
             raise TypeError(f'A instância informada não pertence à Classe Obra')
