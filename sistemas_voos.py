@@ -17,18 +17,20 @@ class Logavel(ABC):
 class IdentificavelMixin:
     """Gera um ID único; combine-o com outras classes."""
     def __init__(self):
-        # TODO: gerar e armazenar um ID (use uuid.uuid4())
-        pass
+        self.id = uuid.uuid4()
+        # TODO: gerar e armazenar um ID (use uuid.uuid4())~
+
     def get_id(self):
+        return self.id
         # TODO: retornar o ID
-        pass
+
 
 
 class AuditavelMixin:
     """Fornece logs simples ao console."""
     def log_evento(self, evento: str):
         # TODO: imprimir no formato  [LOG] <mensagem>
-        pass
+        print(f" [LOG] <{evento}>")
 
 
 # -------------------------------------------------
@@ -37,15 +39,18 @@ class AuditavelMixin:
 class Pessoa:
     """Classe base para pessoas do sistema."""
     def __init__(self, nome: str, cpf: str):
+        self._nome = nome
+        self._cpf = cpf
         # TODO: armazenar nome e cpf como atributos protegidos
-        pass
+
     @property
     def nome(self):
         # TODO: retornar o nome
-        pass
+        return self.nome
+    
     def __str__(self):
+        return (f"{self.nome} ({self._cpf})")
         # TODO: "Maria (123.456.789-00)"
-        pass
 
 
 # -------------------------------------------------
@@ -65,19 +70,35 @@ class Bagagem:
 class Passageiro(Pessoa):
     """Herda de Pessoa e possui bagagens."""
     def __init__(self, nome: str, cpf: str):
+        super().__init__(nome,cpf)
+        self.lista_bag = []
         # TODO: chamar super().__init__ e criar lista vazia de bagagens
-        pass
+        
     def adicionar_bagagem(self, bagagem: Bagagem):
         # TODO: adicionar bagagem à lista
-        pass
+        self.lista_bag.append(bagagem)
+        
     def listar_bagagens(self):
         # TODO: imprimir as bagagens
-        pass
+        for x in self.lista_bag:
+            print(x)
 
 
 # -------------------------------------------------
 # 6) Funcionario (herança múltipla + mixins)     🡇
 # -------------------------------------------------
+class Funcionario(Pessoa, IdentificavelMixin, Logavel):
+    def __init__(self, nome, cpf, cargo, matricula):
+        super().__init__(nome, cpf)
+        self._cargo = cargo
+        self._matricula = matricula
+
+    def exibir_dados(self):
+        print(f"Nome: {self._nome} \nCargo: {self._cargo}\nMatricula: {self._matricula}\nID: {self.id}")
+
+    def logar_entrada(self):
+        print(f" [LOG] <O Funcionário {self.nome} entrou no sistema>")
+
 # TODO: Implementar a classe Funcionario
 # - Herda de Pessoa, IdentificavelMixin e Logavel (pode usar AuditavelMixin)
 # - Atributos: cargo, matricula
@@ -93,8 +114,11 @@ class MiniAeronave:
     """Objeto da composição dentro de Voo."""
     def __init__(self, modelo: str, capacidade: int):
         # TODO: armazenar modelo e capacidade
-        pass
+        self.modelo = modelo
+        self.capacidade = capacidade
+
     def resumo_voo(self):
+        return (f"A mini aeronave de modelo:{self.modelo} tem a capacidade de {self.capacidade} pessoas")
         # TODO: retornar string com modelo e capacidade
         pass
 
@@ -165,4 +189,3 @@ if __name__ == "__main__":
       • Mostrar saídas no console para validar implementações.
     """
     pass
-
