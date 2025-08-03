@@ -43,7 +43,7 @@ class Pessoa:
         self._cpf = cpf
         # TODO: armazenar nome e cpf como atributos protegidos
 
-    @property
+    @property.getter
     def nome(self):
         # TODO: retornar o nome
         return self.nome
@@ -126,6 +126,44 @@ class MiniAeronave:
 # -------------------------------------------------
 # 8) Voo (composição com MiniAeronave)           🡇
 # -------------------------------------------------
+class Voo(MiniAeronave):
+    def __init__(self, modelo, capacidade, numero_voo, origem, destino, aeronave):
+        super().__init__(modelo, capacidade)
+        self.numero_voo = numero_voo
+        self.origem = origem
+        self.destino = destino
+        self.aeronave = aeronave
+        self.passageiros = []
+        self.tribulação = []
+    
+    def adicionar_passageiro(self,passageiro : Passageiro):
+        if not passageiro in self.passageiros and len(self.passageiros) < self.capacidade:
+            self.passageiros.append(passageiro)
+
+        if passageiro in self.passageiros:
+            print(f"O passageiro informado está dentro da aeronave")
+
+        else:
+            print(f"A aeronave está com o número máximo de passageiros")
+
+    def adicionar_tripulante(self, tripulante : Funcionario):
+        if not tripulante in self.tribulação and len(self.tribulação) < self.capacidade:
+            self.tribulação.append(tripulante)
+
+        if tripulante in self.tribulação:
+            print(f"O funcionário informado está dentro da aeronave")
+
+        else:
+            print(f"A aeronave está com o número máximo de tribulantes")
+
+    def listar_passageiros(self):
+        for passageiro in self.passageiros:
+            print(passageiro.nome)
+
+    def listar_tribulantes(self):
+        for tribulante in self.tribulação:
+            print(tribulante.nome)
+
 # TODO: Implementar a classe Voo
 # - Atributos: numero_voo, origem, destino, aeronave
 # - Listas: passageiros, tripulacao
