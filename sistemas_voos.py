@@ -43,13 +43,14 @@ class Pessoa:
         self._cpf = cpf
         # TODO: armazenar nome e cpf como atributos protegidos
 
-    @property.getter
+    @property
     def nome(self):
         # TODO: retornar o nome
-        return self.nome
+        return self._nome
     
+
     def __str__(self):
-        return (f"{self.nome} ({self._cpf})")
+        return (f"{self._nome} ({self._cpf})")
         # TODO: "Maria (123.456.789-00)"
 
 
@@ -90,6 +91,7 @@ class Passageiro(Pessoa):
 class Funcionario(Pessoa, IdentificavelMixin, Logavel):
     def __init__(self, nome, cpf, cargo, matricula):
         super().__init__(nome, cpf)
+        IdentificavelMixin.__init__(self)
         self._cargo = cargo
         self._matricula = matricula
 
@@ -120,7 +122,6 @@ class MiniAeronave:
     def resumo_voo(self):
         return (f"A mini aeronave de modelo:{self.modelo} tem a capacidade de {self.capacidade} pessoas")
         # TODO: retornar string com modelo e capacidade
-        pass
 
 
 # -------------------------------------------------
@@ -134,24 +135,26 @@ class Voo(MiniAeronave):
         self.destino = destino
         self.aeronave = aeronave
         self.passageiros = []
-        self.tribulação = []
+        self.tribulacao = []
     
     def adicionar_passageiro(self,passageiro : Passageiro):
-        if not passageiro in self.passageiros and len(self.passageiros) < self.capacidade:
-            self.passageiros.append(passageiro)
-
         if passageiro in self.passageiros:
-            print(f"O passageiro informado está dentro da aeronave")
+            print("O passageiro já está na aeronave.")
+
+        elif len(self.passageiros) < self.capacidade:
+            self.passageiros.append(passageiro)
+            print("Passageiro adicionado com sucesso.")
 
         else:
-            print(f"A aeronave está com o número máximo de passageiros")
+            print("A aeronave está com o número máximo de passageiros.")
+
 
     def adicionar_tripulante(self, tripulante : Funcionario):
-        if not tripulante in self.tribulação and len(self.tribulação) < self.capacidade:
-            self.tribulação.append(tripulante)
-
-        if tripulante in self.tribulação:
+        if tripulante in self.tribulacao:
             print(f"O funcionário informado está dentro da aeronave")
+
+        elif not tripulante in self.tribulacao and len(self.tribulacao) < self.capacidade:
+            self.tribulacao.append(tripulante)
 
         else:
             print(f"A aeronave está com o número máximo de tribulantes")
@@ -161,8 +164,12 @@ class Voo(MiniAeronave):
             print(passageiro.nome)
 
     def listar_tribulantes(self):
-        for tribulante in self.tribulação:
+        for tribulante in self.tribulacao:
             print(tribulante.nome)
+
+    def __str__(self):
+        return f"Voo {self.numero_voo} de {self.origem} para {self.destino}"
+
 
 # TODO: Implementar a classe Voo
 # - Atributos: numero_voo, origem, destino, aeronave
@@ -187,7 +194,7 @@ class CompanhiaAerea:
         self.lista_Voos = []
         # TODO: validar nome (≥ 3 letras) e criar lista vazia de voos
 
-    @property.getter
+    @property
     def nome(self):
         return self._nome
     
@@ -208,16 +215,16 @@ class CompanhiaAerea:
     
 
     def buscar_voo(self, numero: str):
-        if len(self.lista_Voos) <= numero + 1:
-            return self.lista_Voos[numero]
-        
-        else:
-            return None
+        for voo in self.lista_Voos:
+            if voo.numero_voo == numero:
+                return voo
+        return None
 
     def listar_voos(self):
         for voo in self.lista_Voos:
-            print(self.lista_Voos[voo])
-        # TODO: imprimir todos os voos
+            print(voo)
+
+
 
 
 # -------------------------------------------------
