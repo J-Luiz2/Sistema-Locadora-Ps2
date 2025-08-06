@@ -135,7 +135,7 @@ class Voo(MiniAeronave):
         self.destino = destino
         self.aeronave = aeronave
         self.passageiros = []
-        self.tribulacao = []
+        self.tripulacao = []
     
     def adicionar_passageiro(self,passageiro : Passageiro):
         if passageiro in self.passageiros:
@@ -150,14 +150,14 @@ class Voo(MiniAeronave):
 
 
     def adicionar_tripulante(self, tripulante : Funcionario):
-        if tripulante in self.tribulacao:
+        if tripulante in self.tripulacao:
             print(f"O funcionário informado está dentro da aeronave")
 
-        elif not tripulante in self.tribulacao and len(self.tribulacao) < self.capacidade:
-            self.tribulacao.append(tripulante)
+        elif not tripulante in self.tripulacao and len(self.tripulacao) < self.capacidade:
+            self.tripulacao.append(tripulante)
 
         else:
-            print(f"A aeronave está com o número máximo de tribulantes")
+            print(f"A aeronave está com o número máximo de tripulantes")
 
     def listar_passageiros(self):
         for passageiro in self.passageiros:
@@ -179,7 +179,6 @@ class Voo(MiniAeronave):
 #   • adicionar_tripulante()
 #   • listar_passageiros()
 #   • listar_tripulacao()
-
 
 # -------------------------------------------------
 # 9) CompanhiaAerea                              🡇
@@ -207,7 +206,7 @@ class CompanhiaAerea:
         # TODO: validar + atualizar nome
         
     def adicionar_voo(self, voo):
-        if  not voo in self.lista_Voos:
+        if not voo in self.lista_Voos:
             self.lista_Voos.append(voo)
         
         else:
@@ -240,7 +239,26 @@ class CompanhiaAerea:
 #       ▸ existe ao menos 1 tripulante
 #     imprime relatório de conformidade
 #   • __str__() → "Auditor <nome> (ID: ...)"
-
+class Auditor(IdentificavelMixin, Logavel):
+    def __init__(self, nome: str):
+        super().__init__()
+        self.nome = nome
+    
+    def logar_entrada(self):
+        return "Entrada logada com sucesso!"
+    
+    def auditar_voo(self, voo: Voo):
+        if len(voo.passageiros) > voo.capacidade:
+            raise ValueError("O número de passageiros é inválido.")
+        elif len(voo.passageiros) < 1:
+            raise ValueError("O voo deve conter ao menos 1 passageiro a bordo.")
+        elif len(voo.tripulacao) < 1:
+            raise ValueError("O voo deve conter ao menos um tripulante a bordo")
+        else:
+            return f"o voo {voo} foi auditorado com sucesso"
+    
+    def __str__(self):
+        return f"Nome do auditor: {self.nome}; ID do auditor: {self.get_id()}"
 
 # -------------------------------------------------
 # 11) Bloco de teste                             🡇
@@ -251,5 +269,94 @@ if __name__ == "__main__":
       • Criar 2 companhias, 2 voos cada, passageiros, funcionários e auditor.
       • Adicionar bagagens, listar passageiros, auditar voos.
       • Mostrar saídas no console para validar implementações.
-    """
-    pass
+    """ 
+
+    # ------------------- TESTES ------------------------
+
+# Criando companhias aéreas
+comp1 = CompanhiaAerea("Azul")
+comp2 = CompanhiaAerea("Gol")
+
+# Criando aeronaves
+aero1 = MiniAeronave("Airbus A320", 3)
+aero2 = MiniAeronave("Boeing 737", 2)
+
+# Criando voos
+voo1 = Voo("A320", 3, "AZ123", "São Paulo", "Rio de Janeiro", aero1)
+voo2 = Voo("A320", 3, "AZ456", "Belo Horizonte", "Salvador", aero1)
+voo3 = Voo("B737", 2, "GOL789", "Recife", "Fortaleza", aero2)
+voo4 = Voo("B737", 2, "GOL321", "Curitiba", "Florianópolis", aero2)
+
+# Adicionando voos às companhias
+comp1.adicionar_voo(voo1)
+comp1.adicionar_voo(voo2)
+comp2.adicionar_voo(voo3)
+comp2.adicionar_voo(voo4)
+
+# Criando passageiros
+p1 = Passageiro("Nícolas", "111.111.111-11")
+p2 = Passageiro("Ana", "222.222.222-22")
+p3 = Passageiro("João", "333.333.333-33")
+p4 = Passageiro("Maria", "444.444.444-44")
+
+# Criando funcionários (tripulação)
+f1 = Funcionario("Carlos", "555.555.555-55", "Piloto", "M001")
+f2 = Funcionario("Lucia", "666.666.666-66", "Comissária", "M002")
+
+# Criando auditor
+auditor = Auditor("Auditor Geral")
+
+# Adicionando bagagens
+p1.adicionar_bagagem(Bagagem("Mochila", 7))
+p1.adicionar_bagagem(Bagagem("Mala de mão", 10))
+
+p2.adicionar_bagagem(Bagagem("Mala grande", 23))
+
+# Adicionando passageiros aos voos
+voo1.adicionar_passageiro(p1)
+voo1.adicionar_passageiro(p2)
+voo1.adicionar_passageiro(p3)
+
+voo3.adicionar_passageiro(p4)
+
+# Adicionando tripulação aos voos
+voo1.adicionar_tripulante(f1)
+voo3.adicionar_tripulante(f2)
+
+# Listar passageiros e bagagens
+print("\nPassageiros do Voo 1:")
+voo1.listar_passageiros()
+
+print("\nBagagens de Nícolas:")
+p1.listar_bagagens()
+
+# Auditor loga e audita voos
+print("\nAuditoria de voo 1:")
+print(auditor.logar_entrada())
+try:
+    auditor.auditar_voo(voo1)
+    print("Voo auditado com sucesso: conformidade OK.")
+except ValueError as e:
+    print(f"Erro na auditoria: {e}")
+
+print("\nAuditoria de voo 3:")
+try:
+    auditor.auditar_voo(voo3)
+    print("Voo auditado com sucesso: conformidade OK.")
+except ValueError as e:
+    print(f"Erro na auditoria: {e}")
+
+# Listar voos das companhias
+print("\nVoos da companhia Azul:")
+comp1.listar_voos()
+
+print("\nVoos da companhia Gol:")
+comp2.listar_voos()
+
+# Exibir dados de funcionário
+print("\nDados do Funcionário:")
+f1.exibir_dados()
+
+# Exibir dados do auditor
+print("\nDados do Auditor:")
+print(auditor)
