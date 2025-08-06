@@ -180,25 +180,44 @@ class Voo(MiniAeronave):
 class CompanhiaAerea:
     """Agrupa seus voos (has-a)."""
     def __init__(self, nome: str):
+        if len(nome) >= 3 :
+            self._nome = nome
+        else:
+            raise ValueError("O nome do voo deve ter mais de 3 letras") 
+        self.lista_Voos = []
         # TODO: validar nome (≥ 3 letras) e criar lista vazia de voos
-        pass
-    @property
+
+    @property.getter
     def nome(self):
-        # TODO: retornar nome
-        pass
+        return self._nome
+    
     @nome.setter
     def nome(self, novo_nome: str):
+        if len(novo_nome) >= 3:
+            self._nome = novo_nome
+        else:
+            raise ValueError("O nome do voo deve ter mais de 3 letras") 
         # TODO: validar + atualizar nome
-        pass
+        
     def adicionar_voo(self, voo):
-        # TODO: adicionar voo à lista
-        pass
+        if  not voo in self.lista_Voos:
+            self.lista_Voos.append(voo)
+        
+        else:
+            print(f"O voo: {voo} já foi cadasrtado")
+    
+
     def buscar_voo(self, numero: str):
-        # TODO: retornar voo ou None
-        pass
+        if len(self.lista_Voos) <= numero + 1:
+            return self.lista_Voos[numero]
+        
+        else:
+            return None
+
     def listar_voos(self):
+        for voo in self.lista_Voos:
+            print(self.lista_Voos[voo])
         # TODO: imprimir todos os voos
-        pass
 
 
 # -------------------------------------------------
