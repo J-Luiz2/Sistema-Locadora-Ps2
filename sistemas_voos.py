@@ -127,9 +127,10 @@ class MiniAeronave:
 # -------------------------------------------------
 # 8) Voo (composição com MiniAeronave)           🡇
 # -------------------------------------------------
-class Voo(MiniAeronave):
-    def __init__(self, modelo, capacidade, numero_voo, origem, destino, aeronave):
-        super().__init__(modelo, capacidade)
+class Voo:
+    def __init__(self, numero_voo, origem, destino, aeronave: MiniAeronave):
+        self.modelo = aeronave.modelo
+        self.capacidade = aeronave.capacidade
         if len(numero_voo) >= 3:
             self.numero_voo = numero_voo
         else:
