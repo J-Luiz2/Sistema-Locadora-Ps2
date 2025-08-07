@@ -88,7 +88,7 @@ class Passageiro(Pessoa):
 # -------------------------------------------------
 # 6) Funcionario (herança múltipla + mixins)     🡇
 # -------------------------------------------------
-class Funcionario(Pessoa, IdentificavelMixin, Logavel):
+class Funcionario(Pessoa, IdentificavelMixin, Logavel, AuditavelMixin):
     def __init__(self, nome, cpf, cargo, matricula):
         super().__init__(nome, cpf)
         IdentificavelMixin.__init__(self)
@@ -98,8 +98,8 @@ class Funcionario(Pessoa, IdentificavelMixin, Logavel):
     def exibir_dados(self):
         print(f"Nome: {self._nome} \nCargo: {self._cargo}\nMatricula: {self._matricula}\nID: {self.id}")
 
-    def logar_entrada(self):
-        print(f" [LOG] <O Funcionário {self.nome} entrou no sistema>")
+    def logar_entrada(self, evento):
+        return super().log_evento(evento)
 
 # TODO: Implementar a classe Funcionario
 # - Herda de Pessoa, IdentificavelMixin e Logavel (pode usar AuditavelMixin)
@@ -130,7 +130,10 @@ class MiniAeronave:
 class Voo(MiniAeronave):
     def __init__(self, modelo, capacidade, numero_voo, origem, destino, aeronave):
         super().__init__(modelo, capacidade)
-        self.numero_voo = numero_voo
+        if len(numero_voo) >= 3:
+            self.numero_voo = numero_voo
+        else:
+            raise ValueError("O número de voo tem que ser maior do que 3 algarismo.")
         self.origem = origem
         self.destino = destino
         self.aeronave = aeronave
@@ -164,8 +167,8 @@ class Voo(MiniAeronave):
             print(passageiro.nome)
 
     def listar_tribulantes(self):
-        for tribulante in self.tribulacao:
-            print(tribulante.nome)
+        for tripulante in self.tripulacao:
+            print(tripulante.nome)
 
     def __str__(self):
         return f"Voo {self.numero_voo} de {self.origem} para {self.destino}"
@@ -239,13 +242,13 @@ class CompanhiaAerea:
 #       ▸ existe ao menos 1 tripulante
 #     imprime relatório de conformidade
 #   • __str__() → "Auditor <nome> (ID: ...)"
-class Auditor(IdentificavelMixin, Logavel):
+class Auditor(IdentificavelMixin, Logavel, AuditavelMixin):
     def __init__(self, nome: str):
         super().__init__()
         self.nome = nome
     
-    def logar_entrada(self):
-        return "Entrada logada com sucesso!"
+    def logar_entrada(self, evento="Entrada logada com sucesso!"):
+        return super().log_evento(evento)
     
     def auditar_voo(self, voo: Voo):
         if len(voo.passageiros) > voo.capacidade:
@@ -258,7 +261,7 @@ class Auditor(IdentificavelMixin, Logavel):
             return f"o voo {voo} foi auditorado com sucesso"
     
     def __str__(self):
-        return f"Nome do auditor: {self.nome}; ID do auditor: {self.get_id()}"
+        return f"Nome do auditor: {self.nome} \nID do auditor: {self.get_id()}"
 
 # -------------------------------------------------
 # 11) Bloco de teste                             🡇
@@ -271,92 +274,63 @@ if __name__ == "__main__":
       • Mostrar saídas no console para validar implementações.
     """ 
 
-    # ------------------- TESTES ------------------------
-
-# Criando companhias aéreas
-comp1 = CompanhiaAerea("Azul")
-comp2 = CompanhiaAerea("Gol")
-
-# Criando aeronaves
-aero1 = MiniAeronave("Airbus A320", 3)
-aero2 = MiniAeronave("Boeing 737", 2)
-
-# Criando voos
-voo1 = Voo("A320", 3, "AZ123", "São Paulo", "Rio de Janeiro", aero1)
-voo2 = Voo("A320", 3, "AZ456", "Belo Horizonte", "Salvador", aero1)
-voo3 = Voo("B737", 2, "GOL789", "Recife", "Fortaleza", aero2)
-voo4 = Voo("B737", 2, "GOL321", "Curitiba", "Florianópolis", aero2)
-
-# Adicionando voos às companhias
-comp1.adicionar_voo(voo1)
-comp1.adicionar_voo(voo2)
-comp2.adicionar_voo(voo3)
-comp2.adicionar_voo(voo4)
-
-# Criando passageiros
-p1 = Passageiro("Nícolas", "111.111.111-11")
-p2 = Passageiro("Ana", "222.222.222-22")
-p3 = Passageiro("João", "333.333.333-33")
-p4 = Passageiro("Maria", "444.444.444-44")
-
-# Criando funcionários (tripulação)
-f1 = Funcionario("Carlos", "555.555.555-55", "Piloto", "M001")
-f2 = Funcionario("Lucia", "666.666.666-66", "Comissária", "M002")
-
-# Criando auditor
-auditor = Auditor("Auditor Geral")
-
-# Adicionando bagagens
-p1.adicionar_bagagem(Bagagem("Mochila", 7))
-p1.adicionar_bagagem(Bagagem("Mala de mão", 10))
-
-p2.adicionar_bagagem(Bagagem("Mala grande", 23))
-
-# Adicionando passageiros aos voos
-voo1.adicionar_passageiro(p1)
-voo1.adicionar_passageiro(p2)
-voo1.adicionar_passageiro(p3)
-
-voo3.adicionar_passageiro(p4)
-
-# Adicionando tripulação aos voos
-voo1.adicionar_tripulante(f1)
-voo3.adicionar_tripulante(f2)
-
-# Listar passageiros e bagagens
-print("\nPassageiros do Voo 1:")
-voo1.listar_passageiros()
-
-print("\nBagagens de Nícolas:")
+  # ===== Testes para Bagagem e Passageiro =====
+print("==== Testando Passageiro e Bagagens ====")
+p1 = Passageiro("Maria", "123.456.789-00")
+bag1 = Bagagem("Mochila", 5.5)
+bag2 = Bagagem("Mala de rodinha", 10.2)
+p1.adicionar_bagagem(bag1)
+p1.adicionar_bagagem(bag2)
 p1.listar_bagagens()
 
-# Auditor loga e audita voos
-print("\nAuditoria de voo 1:")
-print(auditor.logar_entrada())
-try:
-    auditor.auditar_voo(voo1)
-    print("Voo auditado com sucesso: conformidade OK.")
-except ValueError as e:
-    print(f"Erro na auditoria: {e}")
-
-print("\nAuditoria de voo 3:")
-try:
-    auditor.auditar_voo(voo3)
-    print("Voo auditado com sucesso: conformidade OK.")
-except ValueError as e:
-    print(f"Erro na auditoria: {e}")
-
-# Listar voos das companhias
-print("\nVoos da companhia Azul:")
-comp1.listar_voos()
-
-print("\nVoos da companhia Gol:")
-comp2.listar_voos()
-
-# Exibir dados de funcionário
-print("\nDados do Funcionário:")
+# ===== Testes para Funcionario com Mixins e Logavel =====
+print("\n==== Testando Funcionario ====")
+f1 = Funcionario("Carlos", "987.654.321-00", "Piloto", "MAT123")
 f1.exibir_dados()
+f1.logar_entrada("Funcionário entrou no sistema")
 
-# Exibir dados do auditor
-print("\nDados do Auditor:")
+# ===== Testes para MiniAeronave e Voo (composição) =====
+print("\n==== Testando Voo e MiniAeronave ====")
+aeronave = MiniAeronave("Boeing 737", 2)  # Capacidade de 2 para facilitar testes
+voo1 = Voo("Boeing 737", 2, "VOO123", "São Paulo", "Rio de Janeiro", aeronave)
+print(voo1)
+
+voo1.adicionar_passageiro(p1)
+voo1.adicionar_tripulante(f1)
+voo1.listar_passageiros()
+voo1.listar_tribulantes()
+
+# ===== Testando CompanhiaAerea (agregação) =====
+print("\n==== Testando Companhia Aérea ====")
+cia = CompanhiaAerea("Latam")
+cia.adicionar_voo(voo1)
+cia.listar_voos()
+voo_buscado = cia.buscar_voo("VOO123")
+print("Voo encontrado:", voo_buscado)
+
+# ===== Testando Auditor com IdentificavelMixin e Logavel =====
+print("\n==== Testando Auditor ====")
+auditor = Auditor("João Auditor")
+auditor.logar_entrada()
 print(auditor)
+
+# Auditar voo
+print("\n==== Auditando Voo ====")
+resultado_auditoria = auditor.auditar_voo(voo1)
+print(resultado_auditoria)
+
+# ===== Testando erro de validação de voo =====
+print("\n==== Testando erros de voo ====")
+try:
+    voo_invalido = Voo("Airbus", 1, "12", "SP", "RJ", aeronave)  # Número de voo inválido
+except ValueError as e:
+    print("Erro esperado:", e)
+
+try:
+    CompanhiaAerea("Oi")  # Nome muito curto
+except ValueError as e:
+    print("Erro esperado:", e)
+
+# ===== Teste de duplicidade de voo na companhia =====
+print("\n==== Testando duplicidade de voo ====")
+cia.adicionar_voo(voo1)  # Deve exibir mensagem de duplicidade
